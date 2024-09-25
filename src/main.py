@@ -1,8 +1,10 @@
 import uvicorn
+from dotenv import load_dotenv
 from api.v1.api import api_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+load_dotenv()
 app = FastAPI(title="Phoca", openapi_url="/openapi.json")
 
 app.add_middleware(
