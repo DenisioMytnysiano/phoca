@@ -1,8 +1,9 @@
 from domain.features.category.category_service import CategoryService
+from domain.ai.embeddings.transformer.transformer_embeddings import TransformerEmbeddings
 from infrastructure.repositories.mongo_category_repository import MongoCategoryRepository
 from infrastructure.vectorstores.weaviate_category_vector_store import WeaviateCategoryVectorStore
 
-
+embeddings = TransformerEmbeddings()
 category_repository = MongoCategoryRepository()
-category_vector_store = WeaviateCategoryVectorStore()
+category_vector_store = WeaviateCategoryVectorStore(embeddings)
 category_service = CategoryService(category_repository, category_vector_store)

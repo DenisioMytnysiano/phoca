@@ -1,7 +1,7 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from features.embeddings.embeddings import Embeddings
-from features.embeddings.transformer.config import TransformerEmbeddingsConfig
+from domain.ai.embeddings.embeddings import Embeddings
+from domain.ai.embeddings.transformer.config import TransformerEmbeddingsConfig
 
 
 class TransformerEmbeddings(Embeddings):

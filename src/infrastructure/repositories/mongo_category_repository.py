@@ -4,8 +4,8 @@ from uuid import uuid4
 from domain.features.category.category import Category
 from domain.features.category.category_repository import CategoryRepository
 from domain.features.category.exceptions import CategoryNotFoundException, DuplicateCategoryException
-from infrastructure.mongo.database import database
 from pymongo.errors import DuplicateKeyError
+from infrastructure.db.mongo.database import database
 
 
 class MongoCategoryRepository(CategoryRepository):
