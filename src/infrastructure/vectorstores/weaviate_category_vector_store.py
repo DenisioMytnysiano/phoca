@@ -39,7 +39,7 @@ class WeaviateCategoryVectorStore(CategoryVectorStore):
 
 
     def delete_category(self, id: str):
-        self.collection.data.delete_many(where=Filter.by_property("id").equal(id))
+        self.collection.data.delete_many(where=Filter.by_property("category_id").equal(id))
 
     def __create_properties(self, category):
         properties = []

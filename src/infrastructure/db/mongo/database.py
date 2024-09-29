@@ -2,6 +2,5 @@ from pymongo import MongoClient
 
 from infrastructure.db.mongo.config import MongoConfig
 
-uri = f"mongodb://{MongoConfig.USER}:{MongoConfig.PASSWORD}@{MongoConfig.HOST}:{MongoConfig.PORT}"
-client = MongoClient(uri)
+client = MongoClient(MongoConfig.URL)
 database = client.get_database(MongoConfig.DB_NAME)

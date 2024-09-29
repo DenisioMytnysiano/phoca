@@ -2,6 +2,18 @@ version: '3.8'
 
 services:
 
+  rabbitmq:
+    image: rabbitmq:4.0.2-management
+    container_name: devchallenge-xxi-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   mongodb:
     image: mongo:8.0
     container_name: devchallenge-xxi-mongo
@@ -41,3 +53,4 @@ services:
 volumes:
   mongodb_data:
   weaviate_data:
+  rabbitmq_data:
