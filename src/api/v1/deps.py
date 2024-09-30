@@ -1,9 +1,20 @@
+from domain.ai.keywords.transformer.transformer_keywords_extractor import TransformerKeywordsExtractor
+from domain.features.call_analysis.category_classification.vector_based.vector_based_call_category_classifier import VectorBasedCallCategoryClassifier
 from domain.features.category.category_service import CategoryService
 from domain.ai.embeddings.transformer.transformer_embeddings import TransformerEmbeddings
+from infrastructure.repositories.mongo_analysis_result_repository import MongoAnalysisResultRepository
+from infrastructure.repositories.mongo_analysis_state_repository import MongoAnalysisStateRepository
 from infrastructure.repositories.mongo_category_repository import MongoCategoryRepository
+from infrastructure.vectorstores.weaviate_call_keywords_vector_store import WeaviateCallKeywordsVectorStore
 from infrastructure.vectorstores.weaviate_category_vector_store import WeaviateCategoryVectorStore
 
 embeddings = TransformerEmbeddings()
 category_repository = MongoCategoryRepository()
 category_vector_store = WeaviateCategoryVectorStore(embeddings)
 category_service = CategoryService(category_repository, category_vector_store)
+analysis_state_repository = MongoAnalysisStateRepository()
+analysis_result_repository = MongoAnalysisResultRepository()
+keywords_extractor = TransformerKeywordsExtractor()
+keywords_store = WeaviateCallKeywordsVectorStore(embeddings)
+category_store = WeaviateCategoryVectorStore(embeddings)
+category_classifier = VectorBasedCallCategoryClassifier(keywords_extractor, keywords_store, category_store)

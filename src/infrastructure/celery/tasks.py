@@ -1,46 +1,58 @@
 from celery import chain, chord, group
+from domain.features.call_analysis.core.call_analysis_status import CallAnalysisStatus
 from infrastructure.celery.celery import app
+from infrastructure.celery.deps import (
+    analysis_state_repository,
+    analysis_result_repository,
+    transcriber,
+    emotional_tone_analyzer,
+    entities_extractor,
+    category_classifier
+)
 
 
 @app.task(queue="download-and-transcribe")
 def download_and_transcribe_audio(call_id, audio_url: str):
-    print(f"accepted download {call_id} {audio_url}")
-    return "Test transcription"
+    transcription = transcriber.transcribe(audio_url)
+    analysis_result_repository.set_transcription(call_id, transcription)
+    return transcription
 
 
-@app.task(queue="identify-caller-and-location")
-def identify_caller_and_location(transcription, call_id):
-    print(f"accepted caller {call_id} transcription {transcription}")
+@app.task(queue="identify-call-entities")
+def identify_call_entities(transcription, call_id):
+    entities = entities_extractor.extract_entities(transcription)
+    analysis_result_repository.set_extracted_entities(call_id, entities)
 
 
 @app.task(queue="identify-emotional-tone")
 def identify_emotional_tone(transcription, call_id):
-    print(f"accepted emotional tone {call_id} transcription {transcription}")
+    emotional_tone = emotional_tone_analyzer.analyze_emotional_tone(transcription)
+    analysis_result_repository.set_emotional_tone(call_id, emotional_tone)
 
 
-@app.task(queue="embed-to-topics-space")
-def embed_to_topics_space(transcription, call_id):
-    print(f"accepted embed {call_id} transcription {transcription}")
+@app.task(queue="classify-category")
+def classify_category(transcription, call_id):
+    category_classifier.classify(call_id, transcription)
 
 
 @app.task(queue="update-analysis-status")
-def set_status(call_id: str, status: str, exc=None, traceback=None):
-    print(f"accepted set status {call_id} status {status}")
+def set_status(call_id: str, status: CallAnalysisStatus):
+    analysis_state_repository.set_status(call_id, status)
 
 
 @app.task(queue="analyze-call")
 def analyze_call(call_id: str, audio_url: str):
     workflow = chain(
-        set_status.si(call_id, "Started"),
+        set_status.si(call_id, CallAnalysisStatus.IN_PROGRESS),
         download_and_transcribe_audio.si(call_id, audio_url),
         chord(
             group(
-                identify_caller_and_location.s(call_id),
+                identify_call_entities.s(call_id),
                 identify_emotional_tone.s(call_id),
-                embed_to_topics_space.s(call_id),
+                classify_category.s(call_id),
             ),
-            set_status.si(call_id, "Finished"),
+            set_status.si(call_id, CallAnalysisStatus.FINISHED),
         ),
     )
 
-    workflow.apply_async(link_error=set_status.si(call_id, "Failed"))
+    workflow.apply_async(link_error=set_status.si(call_id, CallAnalysisStatus.FAILED))

@@ -1,0 +1,8 @@
+from enum import Enum
+
+
+class CallEntity(str, Enum):
+    CALLER = "CALLER"
+    CALLER_LOCATION = "CALLER-LOCATION"
+    RECIPIENT = "RECIPIENT"
+    RECIPIENT_LOCATION = "RECIPIENT-LOCATION"
