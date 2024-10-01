@@ -11,7 +11,7 @@ class CategoryVectorStore(Protocol):
     def update_category(self, category: Category):
         pass
 
-    def get_similar(self, vectors: List[np.array]) -> list[str]:
+    def get_similar(self, vectors: List[np.array], threshold: float = 0.5) -> list[str]:
         pass
 
     def delete_category(self, id: str):

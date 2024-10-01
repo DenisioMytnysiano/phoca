@@ -26,12 +26,12 @@ class WeaviateCategoryVectorStore(CategoryVectorStore):
         self.delete_category(category.id)
         self.add_category(category)
 
-    def get_similar(self, vectors: List[np.array]) -> list[str]:
+    def get_similar(self, vectors: List[np.array], threshold=0.5) -> list[str]:
         result = set()
         for vector in vectors:
             response = self.collection.query.near_vector(
                 near_vector=vector,
-                certainty=0.5
+                certainty=threshold
             )
             for o in response.objects:
                 result.add(o.properties.category)

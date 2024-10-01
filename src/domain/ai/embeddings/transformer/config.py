@@ -1,4 +1,4 @@
 import os
 
-class TransformerKeywordConfig:
-    MODEL = os.environ.get("KEY_WORDS_EMBEDDING_MODEL") or "all-MiniLM-L6-v2"
+class TransformerEmbeddingsConfig:
+    MODEL = os.environ.get("EMBEDDING_MODEL") or "all-MiniLM-L6-v2"

@@ -4,8 +4,8 @@ from domain.features.call_analysis.entities_extraction.call_entity import CallEn
 
 class RuleBasedCallEntitiesExtractor(CallEntitiesExtractor):
 
-    def extract_entities(self, transcription: str) -> dict[str, CallEntity]:
+    def extract_entities(self, transcription: str) -> dict[CallEntity, str]:
         return {
-            "PERSON1": CallEntity.CALLER,
-            "LOCATION1": CallEntity.CALLER_LOCATION
+            CallEntity.CALLER: "PERSON1",
+            CallEntity.CALLER_LOCATION: "LOCATION1"
         }

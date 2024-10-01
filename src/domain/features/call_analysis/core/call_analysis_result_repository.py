@@ -9,7 +9,7 @@ class CallAnalysisResultRepository(Protocol):
     def set_transcription(self, call_id: str, transcription: str):
         pass
 
-    def set_extracted_entities(self, call_id: str, extracted_entities: dict[str, CallEntity]):
+    def set_extracted_entities(self, call_id: str, extracted_entities: dict[CallEntity, str]):
         pass
 
     def set_emotional_tone(self, call_id: str, emotional_tone: CallEmotionalTone):

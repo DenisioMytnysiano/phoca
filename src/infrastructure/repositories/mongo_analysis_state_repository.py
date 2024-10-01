@@ -1,19 +1,22 @@
 from domain.features.call_analysis.core.call_analysis_state_repository import CallAnalysisStateRepository
 from domain.features.call_analysis.core.call_analysis_status import CallAnalysisStatus
+from domain.features.call_analysis.core.exceptions import CallNotFoundException
+from infrastructure.db.mongo.database import database
 
 class MongoAnalysisStateRepository(CallAnalysisStateRepository):
 
-    def accepted(self, call_id: str, audio_url: str):
-        return super().accepted(call_id, audio_url)
-    
-    def in_progress(self, call_id):
-        return super().in_progress(call_id)
-    
-    def completed(self, call_id):
-        return super().completed(call_id)
-    
-    def failed(self, call_id: str):
-        return super().failed(call_id)
-    
+    def __init__(self):
+        self.collection = database.get_collection("call-analysis-state")
+        self.collection.create_index("call_id", unique=True)
+
+    def set_status(self, call_id, status: CallAnalysisStatus):
+        return self.collection.update_one(
+            {"call_id": call_id},
+            {"$set": {"status": status}
+        }, upsert=True)
+
     def get_status(self, call_id) -> CallAnalysisStatus:
-        return super().get_status(call_id)
+        result = self.collection.find_one({"call_id": call_id})
+        if not result:
+            raise CallNotFoundException(call_id)
+        return result

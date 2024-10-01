@@ -4,5 +4,5 @@ from domain.features.call_analysis.entities_extraction.call_entity import CallEn
 
 class CallEntitiesExtractor(Protocol):
 
-    def extract_entities(self, transcription: str) -> dict[str, CallEntity]:
+    def extract_entities(self, transcription: str) -> dict[CallEntity, str]:
         pass
