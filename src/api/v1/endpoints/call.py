@@ -19,6 +19,7 @@ def create_call(request: CreateCallRequest):
     return CreateCallResponse(call_id)
 
 
+
 @router.post("/{call_id}", response_model=GetCallResponse)
 def get_call(call_id: str):
     try:
