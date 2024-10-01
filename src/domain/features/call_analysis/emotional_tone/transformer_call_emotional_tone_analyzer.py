@@ -1,14 +1,18 @@
+import os
 import torch
 from typing import List, Dict
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from domain.features.call_analysis.emotional_tone.call_emotional_tone import CallEmotionalTone
 from domain.features.call_analysis.emotional_tone.call_emotional_tone_analyzer import CallEmotionalToneAnalyzer
 
+class TransformerCallEmotionalToneAnalyzerConfig:
+    MODEL = os.environ.get("EMOTIONAL_TONE_MODEL") or "j-hartmann/emotion-english-distilroberta-base"
+
 class TransformerCallEmotionalToneAnalyzer(CallEmotionalToneAnalyzer):
 
-    def __init__(self, emotion_model_name: str = "j-hartmann/emotion-english-distilroberta-base"):
-        self.tokenizer = AutoTokenizer.from_pretrained(emotion_model_name)
-        self.model = AutoModelForSequenceClassification.from_pretrained(emotion_model_name)
+    def __init__(self):
+        self.tokenizer = AutoTokenizer.from_pretrained(TransformerCallEmotionalToneAnalyzerConfig.MODEL)
+        self.model = AutoModelForSequenceClassification.from_pretrained(TransformerCallEmotionalToneAnalyzerConfig.MODEL)
         self.max_length = self.tokenizer.model_max_length
 
     def analyze_emotional_tone(self, transcription: str) -> CallEmotionalTone:
