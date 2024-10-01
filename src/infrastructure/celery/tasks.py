@@ -4,7 +4,7 @@ from infrastructure.celery.celery import app
 from infrastructure.celery.deps import (
     analysis_state_repository,
     analysis_result_repository,
-    transcriber,
+    speech_recognizer,
     emotional_tone_analyzer,
     entities_extractor,
     category_classifier
@@ -13,7 +13,7 @@ from infrastructure.celery.deps import (
 
 @app.task(queue="download-and-transcribe")
 def download_and_transcribe_audio(call_id, audio_url: str):
-    transcription = transcriber.transcribe(audio_url)
+    transcription = speech_recognizer.transcribe(audio_url)
     analysis_result_repository.set_transcription(call_id, transcription)
     return transcription
 

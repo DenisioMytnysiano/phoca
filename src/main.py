@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from infrastructure.db.weaviate.client import client as weaviate
 from infrastructure.db.mongo.database import client as mongo
+
 load_dotenv()
 
 
@@ -14,6 +15,7 @@ async def lifespan(app: FastAPI):
     yield
     weaviate.close()
     mongo.close()
+
 
 app = FastAPI(lifespan=lifespan, title="Phoca", openapi_url="/openapi.json")
 
