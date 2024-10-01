@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+
+  fastapi:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: devchallenge-xxi-backend
+    restart: always
+    environment:
+      APP_MODE: backend
+      WHISPER_MODEL: base.en
+      EMBEDDING_MODEL: all-mpnet-base-v2
+      EMOTIONAL_TONE_MODEL: j-hartmann/emotion-english-distilroberta-base
+      KEY_WORDS_EXTRACTION_EMBEDDING_MODEL: all-mpnet-base-v2
+      KEY_WORDS_SIMILARITY_THRESHOLD: 0.5
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_USER: root
+      MONGO_PASSWORD: password
+      MONGO_DB_NAME: devchallenge-xxi
+      WEAVIATE_HOST: weaviate
+      WEAVIATE_PORT: 8080
+      WEAVIATE_GRPC_PORT: 50051
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - mongodb
+      - weaviate
+
+  worker:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: devchallenge-xxi-worker
+    restart: always
+    environment:
+      APP_MODE: celery
+      WHISPER_MODEL: base.en
+      EMBEDDING_MODEL: all-mpnet-base-v2
+      EMOTIONAL_TONE_MODEL: j-hartmann/emotion-english-distilroberta-base
+      KEY_WORDS_EXTRACTION_EMBEDDING_MODEL: all-mpnet-base-v2
+      KEY_WORDS_SIMILARITY_THRESHOLD: 0.5
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_USER: root
+      MONGO_PASSWORD: password
+      MONGO_DB_NAME: devchallenge-xxi
+      WEAVIATE_HOST: weaviate
+      WEAVIATE_PORT: 8080
+      WEAVIATE_GRPC_PORT: 50051
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: password
+    depends_on:
+      - rabbitmq
+      - mongodb
+      - weaviate
+
+  rabbitmq:
+    image: rabbitmq:4.0.2-management
+    container_name: devchallenge-xxi-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  mongodb:
+    image: mongo:8.0
+    container_name: devchallenge-xxi-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: cr.weaviate.io/semitechnologies/weaviate:1.26.5
+    container_name: devchallenge-xxi-weaviate
+    ports:
+    - 8090:8080
+    - 50051:50051
+    volumes:
+    - weaviate_data:/var/lib/weaviate
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'weaviate'
+
+volumes:
+  mongodb_data:
+  weaviate_data:
+  rabbitmq_data:

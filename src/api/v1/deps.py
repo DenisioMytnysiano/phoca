@@ -1,6 +1,5 @@
 from domain.ai.keywords.transformer.transformer_keywords_extractor import TransformerKeywordsExtractor
 from domain.features.call_analysis.category_classification.vector_based.vector_based_call_category_classifier import VectorBasedCallCategoryClassifier
-from domain.features.call_analysis.core.call_url_validator import CallUrlValidator
 from domain.features.category.category_service import CategoryService
 from domain.ai.embeddings.transformer.transformer_embeddings import TransformerEmbeddings
 from infrastructure.repositories.mongo_analysis_result_repository import MongoAnalysisResultRepository
