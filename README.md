@@ -75,11 +75,30 @@ docker exec devchallenge-xxi-backend bash -c "cd /app/tests && pytest -v"
 ```
 
 ## Corner Cases Covered
-- 
+- **large files handling:** in case file content cannot fit into the model, it is splitted into chunks and then results are aggregated
+- **calls categorization after category updates and deletes:** by utilizing shared latent vector space for key topics in categories and keywords in calls it is not needed to recalculate all categorization results for each of the calls
+
+- **in case of error during the analysis user will be given a correspoding details**
+
+- **system works correstly in case there is noise in the input audio**
+
+- **system works correctly for different accents in english**
+
+- **all components of the system don't send data to external APIs which is critical for such a solution**
+
+- **system chooses the surname and name of the caller in case both are present**
+
+- **each call can have multiple categories or no category at all**
+
+- **concurrent analysis runs and asynchronous processing**: system can handle multiple analysis requests simultaneously balancing the load between workers
 
 ## Further Steps
 - Deploy application in the cloud
+
 - Utilize GPU for faster speech-to-text
+
 - Speech diarization in processing pipeline
+
 - LLM based embeddings for categories classification
+
 - Open souce LLM (like llama) to conduct text analysis
