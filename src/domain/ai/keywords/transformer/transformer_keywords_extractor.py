@@ -1,16 +1,16 @@
 import numpy as np
 from keybert import KeyBERT
 from sentence_transformers import SentenceTransformer
-from domain.ai.embeddings.embeddings import Embeddings
+from domain.ai.keywords.keywords_extractor import KeywordsExtractor
 from domain.ai.keywords.transformer.config import TransformerKeywordsConfig
 
 
-class TransformerKeywordsExtractor(Embeddings):
+class TransformerKeywordsExtractor(KeywordsExtractor):
 
     def __init__(self):
         self.model = KeyBERT(SentenceTransformer(TransformerKeywordsConfig.MODEL))
 
-    def embed(self, text: str) -> np.array:
+    def extract(self, text: str) -> np.array:
         return [
             item[0]
             for item in self.model.extract_keywords(

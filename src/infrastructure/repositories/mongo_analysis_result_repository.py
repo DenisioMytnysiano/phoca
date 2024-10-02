@@ -33,4 +33,9 @@ class MongoAnalysisResultRepository(CallAnalysisResultRepository):
         result = self.collection.find_one({"call_id": call_id})
         if not result:
             raise CallNotFoundException(call_id)
-        return result
+        return CallAnalysisResult(
+            call_id=result["call_id"],
+            transcription=result["transcription"],
+            emotional_tone=result["emotional_tone"],
+            extracted_entities=result["extracted_entities"]
+        )

@@ -19,4 +19,4 @@ class MongoAnalysisStateRepository(CallAnalysisStateRepository):
         result = self.collection.find_one({"call_id": call_id})
         if not result:
             raise CallNotFoundException(call_id)
-        return result
+        return result["status"]

@@ -25,9 +25,9 @@ def get_call(call_id: str):
     try:
         current_status = analysis_state_repository.get_status(call_id)
         if current_status in [CallAnalysisStatus.ACCEPTED, CallAnalysisStatus.IN_PROGRESS]:
-            return HTTPException(status_code=202)
+            raise HTTPException(status_code=202)
         if current_status == CallAnalysisStatus.FAILED:
-            return HTTPException(status_code=422, detail="Call analysis failed.")
+            raise HTTPException(status_code=422, detail="Call analysis failed.")
 
         analysis_result = analysis_result_repository.get_result(call_id)
         categories = category_classifier.get_result(call_id)
@@ -41,4 +41,4 @@ def get_call(call_id: str):
         )
 
     except CallNotFoundException:
-        return HTTPException(status_code=404, detail="Call not found")
+        raise HTTPException(status_code=404, detail="Call not found")

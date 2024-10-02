@@ -4,11 +4,13 @@ from domain.features.category.category import Category
 from domain.features.category.category_vector_store import CategoryVectorStore
 from infrastructure.db.weaviate.client import client
 from domain.ai.embeddings.embeddings import Embeddings
-from weaviate.classes.query import Filter
+from weaviate.classes.query import Filter, MetadataQuery
 
 class WeaviateCategoryVectorStore(CategoryVectorStore):
 
     def __init__(self, embeddings: Embeddings):
+        if not client.collections.exists("categories"):
+            client.collections.create("categories")
         self.collection = client.collections.get("categories")
         self.embedding_model = embeddings
 
@@ -31,10 +33,11 @@ class WeaviateCategoryVectorStore(CategoryVectorStore):
         for vector in vectors:
             response = self.collection.query.near_vector(
                 near_vector=vector,
-                certainty=threshold
+                distance=threshold,
+                return_metadata=MetadataQuery(distance=True)
             )
             for o in response.objects:
-                result.add(o.properties.category)
+                result.add(o.properties["category"])
         return list(result)
 
 

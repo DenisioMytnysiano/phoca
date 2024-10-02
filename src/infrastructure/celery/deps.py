@@ -3,7 +3,7 @@ from domain.ai.keywords.transformer.transformer_keywords_extractor import Transf
 from domain.ai.speech_recognition.whisper.whisper_speech_recognizer import WhisperSpeechRecognizer
 from domain.features.call_analysis.category_classification.vector_based.vector_based_call_category_classifier import VectorBasedCallCategoryClassifier
 from domain.features.call_analysis.emotional_tone.transformer_call_emotional_tone_analyzer import TransformerCallEmotionalToneAnalyzer
-from domain.features.call_analysis.entities_extraction.rule_based.rule_based_call_entities_extractor import RuleBasedCallEntitiesExtractor
+from domain.features.call_analysis.entities_extraction.ner.ner_call_entities_extractor import NerCallEntitiesExtractor
 from infrastructure.repositories.mongo_analysis_result_repository import MongoAnalysisResultRepository
 from infrastructure.repositories.mongo_analysis_state_repository import MongoAnalysisStateRepository
 from infrastructure.vectorstores.weaviate_call_keywords_vector_store import WeaviateCallKeywordsVectorStore
@@ -17,7 +17,7 @@ speech_recognizer = WhisperSpeechRecognizer()
 
 emotional_tone_analyzer = TransformerCallEmotionalToneAnalyzer()
 
-entities_extractor = RuleBasedCallEntitiesExtractor()
+entities_extractor = NerCallEntitiesExtractor()
 
 keywords_extractor = TransformerKeywordsExtractor()
 embeddings = TransformerEmbeddings()

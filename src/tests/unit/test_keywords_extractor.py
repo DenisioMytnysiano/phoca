@@ -6,17 +6,17 @@ def extractor():
     return TransformerKeywordsExtractor()
 
 def test_given_empty_text_when_extracting_keywords_then_return_empty_list(extractor):
-    result = extractor.embed("")
+    result = extractor.extract("")
     assert isinstance(result, list)
     assert len(result) == 0
 
 def test_given_single_word_when_extracting_keywords_then_return_lowercase_word(extractor):
-    result = extractor.embed("Security")
+    result = extractor.extract("Security")
     assert len(result) == 1
     assert result[0] == "security"
 
 def test_given_short_text_when_extracting_keywords_then_return_non_empty_list_of_strings(extractor):
-    result = extractor.embed("Diplomacy in international relations")
+    result = extractor.extract("Diplomacy in international relations")
     assert isinstance(result, list)
     assert len(result) > 0
     assert all(isinstance(keyword, str) for keyword in result)
@@ -29,7 +29,7 @@ def test_given_long_text_when_extracting_keywords_then_return_list_of_up_to_20_s
     culture, environment, and human rights. International treaties are usually negotiated by diplomats 
     prior to endorsement by national politicians.
     """
-    result = extractor.embed(long_text)
+    result = extractor.extract(long_text)
     assert isinstance(result, list)
     assert len(result) > 0
     assert len(result) <= 20
@@ -50,35 +50,35 @@ test_cases = [
 
 @pytest.mark.parametrize("text, expected_keywords", test_cases, ids=range(len(test_cases)))
 def test_given_diplomatic_text_when_extracting_keywords_then_return_relevant_keywords(text, expected_keywords, extractor):
-    result = extractor.embed(text)
+    result = extractor.extract(text)
     assert any(keyword in result for keyword in expected_keywords)
 
 def test_given_text_with_multiple_words_when_extracting_keywords_then_return_keywords_of_up_to_two_words(extractor):
     text = "The Paris Agreement is an international treaty on climate change."
-    result = extractor.embed(text)
+    result = extractor.extract(text)
     assert any(len(keyword.split()) <= 2 for keyword in result)
 
 def test_given_text_with_stop_words_when_extracting_keywords_then_exclude_stop_words(extractor):
     text = "The and of in on are common stop words in English."
-    result = extractor.embed(text)
+    result = extractor.extract(text)
     stop_words = ["the", "and", "of", "in", "on", "are"]
     assert all(keyword.lower() not in stop_words for keyword in result)
 
 def test_given_same_text_when_extracting_keywords_multiple_times_then_return_consistent_results(extractor):
     text = "Diplomatic negotiations often involve complex international relations."
-    result1 = extractor.embed(text)
-    result2 = extractor.embed(text)
+    result1 = extractor.extract(text)
+    result2 = extractor.extract(text)
     assert result1 == result2
 
 def test_given_different_texts_when_extracting_keywords_then_return_different_results(extractor):
     text1 = "Climate change is a global challenge."
     text2 = "Economic sanctions can be used as a diplomatic tool."
-    result1 = extractor.embed(text1)
-    result2 = extractor.embed(text2)
+    result1 = extractor.extract(text1)
+    result2 = extractor.extract(text2)
     assert result1 != result2
 
 def test_given_any_text_when_extracting_keywords_then_return_list_of_strings(extractor):
     text = "Diplomacy requires skilled communication and negotiation."
-    result = extractor.embed(text)
+    result = extractor.extract(text)
     assert isinstance(result, list)
     assert all(isinstance(keyword, str) for keyword in result)
